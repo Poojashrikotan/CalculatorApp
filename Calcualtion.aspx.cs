@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Caculator.Classses;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Configuration;
 using System.Web;
@@ -10,12 +13,50 @@ namespace Caculator
 {
     public partial class Calcualtion : System.Web.UI.Page
     {
+        SqlConnection con = new SqlConnection("Data Source=LAPTOP-GAN35H38;Initial Catalog=CalculatorB\\DB;User Id=sa;password=pctadmin$123");
         static float a, c, d;
         static char b;
         protected void Page_Load(object sender, EventArgs e)
         {
          //   txtnumber.Text = "";
         }
+
+        internal  string InsertDetals(Calcu inputtext)
+        {
+            con.Open();
+            SqlDataReader sdr = null;
+            string sucess = "";
+            try
+            {
+                SqlCommand cmd = new SqlCommand("insert into Calci values(@num1,@num2,@opt,@res,@ondate)", con);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@num1", inputtext.num1);
+                cmd.Parameters.AddWithValue("@num2", inputtext.num2);
+                cmd.Parameters.AddWithValue("@opt", inputtext.opt);
+                cmd.Parameters.AddWithValue("@res", inputtext.res);
+                cmd.Parameters.AddWithValue("@ondate", inputtext.ondate);               
+                sdr = cmd.ExecuteReader();
+                if (sdr.HasRows)
+                {
+                    while (sdr.Read())
+                    {
+                        sucess = "Inserted";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write("InsertDetails" + ex.Message);
+              
+            }
+            finally
+            {
+                if (con != null) con.Close();
+            }
+            return sucess;
+        }
+
+
 
         protected void btn1_Click(object sender, EventArgs e)
         {
@@ -280,44 +321,65 @@ namespace Caculator
             }
         }
 
-        protected void btneql_Click(object sender, EventArgs e)
+        public void btneql_Click(object sender, EventArgs e)
         {
             try
             {
+                Calcu calcus = new Calcu();
+                calcus.num2= txtnumber.Text;
+                
                 c = Convert.ToInt32(txtnumber.Text);
                 txtnumber.Text = "";
                 if (b == '/')
                 {
+                    calcus.num1 = a.ToString();
+                    calcus.opt = "Division";
                     d = a / c;
                     txtnumber.Text += d;
                     a = d;
+                    calcus.res = a.ToString();
                 }
                 else if (b == '+')
                 {
+                    calcus.num1 = a.ToString();
+                    calcus.opt = "Addition";
                     d = a + c;
                     txtnumber.Text += d;
                     a = d;
+                    calcus.res = a.ToString();
                 }
                 else if (b == '-')
                 {
+                    calcus.num1 = a.ToString();
+                    calcus.opt = "Subtraction";
                     d = a - c;
                     txtnumber.Text += d;
                     a = d;
+                    calcus.res = a.ToString();
                 }
                 else
                 {
+                    calcus.num1 = a.ToString();
+                    calcus.opt = "Multiplication";
                     d = a * c;
                     txtnumber.Text += d;
                     a = d;
+                    calcus.res = a.ToString();
                 }
+               calcus.ondate= DateTime.Now.ToString(); ;
+
+
+
+             //   List<Calcu> list=new List<Calcu>();
+                string success = InsertDetals(calcus);
+
             }
             catch (Exception ex)
             {
-                Console.Write("sub_Click" + ex.Message);
+                Console.Write("btneql_Click" + ex.Message);
             }
 
         }
 
-      
     }
 }

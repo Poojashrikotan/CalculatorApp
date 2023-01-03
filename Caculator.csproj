@@ -178,6 +178,7 @@
     <Compile Include="Calcualtion.aspx.designer.cs">
       <DependentUpon>Calcualtion.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Classses\DBClass.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
